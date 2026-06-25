@@ -1,0 +1,157 @@
+.page {
+  padding: 20px 0 100px;
+}
+
+/* 头像区 */
+.profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 16px;
+}
+
+.avatar-large {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.avatar-text-large {
+  color: white;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.profile-name {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.profile-id {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* 总览 */
+.overview-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.ov-item {
+  text-align: center;
+}
+
+/* 菜单 */
+.menu-list {
+  padding: 8px 0;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  gap: 10px;
+}
+
+.menu-icon {
+  font-size: 20px;
+}
+
+.menu-text {
+  flex: 1;
+  font-size: 15px;
+}
+
+.menu-value {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.menu-arrow {
+  font-size: 20px;
+  color: var(--text-muted);
+}
+
+.menu-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0 16px;
+}
+
+/* 服务器状态 */
+.server-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+}
+
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.dot-green { background: var(--accent-green); }
+.dot-red { background: var(--accent-red); }
+
+/* 入口卡片 */
+.entrance-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.entrance-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.entrance-icon {
+  font-size: 28px;
+}
+
+.entrance-title {
+  font-size: 16px;
+  font-weight: 600;
+  display: block;
+}
+
+.entrance-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  display: block;
+}
+
+.version-text {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff4757;
+  flex-shrink: 0;
+}

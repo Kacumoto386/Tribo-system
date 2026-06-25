@@ -1,0 +1,89 @@
+<!-- 专项活动页面 -->
+<view class="page">
+  <!-- 创建入口 -->
+  <view class="card add-event-bar" bindtap="showCreateDialog">
+    <text class="add-icon">🏆</text>
+    <text class="add-text">发起新挑战</text>
+  </view>
+
+  <!-- 活动类型筛选 -->
+  <view class="filter-row">
+    <view wx:for="{{['全部','跑步','骑行','读书','减肥','其他']}}" wx:key="index"
+          class="filter-tab {{typeIndex === index ? 'filter-active' : ''}}"
+          data-index="{{index}}" bindtap="switchType">
+      <text>{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 活动列表 -->
+  <view wx:for="{{events}}" wx:key="id" class="card event-card" data-id="{{item.id}}" bindtap="goDetail">
+    <view class="ec-header">
+      <view class="ec-type-tag">{{item.typeTag}}</view>
+      <text class="ec-status {{['tag-info','tag-warning','tag-success'][item.status] || 'tag-info'}}">
+        {{['准备中','进行中','已完成','已取消'][item.status] || '准备中'}}
+      </text>
+    </view>
+    <text class="ec-title">{{item.title}}</text>
+    <view class="ec-progress-section">
+      <view class="ec-progress-bar">
+        <view class="ec-progress-fill" style="width:{{item.progress_percent}}%"></view>
+      </view>
+      <text class="ec-progress-text">{{item.progress_percent}}%</text>
+    </view>
+    <view class="ec-footer">
+      <text class="ec-meta">🎯 {{item.current_value || 0}}/{{item.goal_value}} {{item.unit || ''}}</text>
+      <text wx:if="{{item.is_team_event}}" class="ec-meta">👥 团队赛</text>
+    </view>
+  </view>
+
+  <view wx:if="{{events.length === 0}}" class="empty-state">
+    <text class="empty-text">还没有专项活动</text>
+    <text class="empty-sub">发起一个挑战，为目标坚持到底！</text>
+  </view>
+
+  <!-- 创建挑战弹窗 -->
+  <view wx:if="{{showCreate}}" class="dialog-mask" bindtap="closeCreate">
+    <view class="dialog-box dialog-wide" catchtap>
+      <view class="dialog-header">
+        <text class="dialog-title">🏆 发起新挑战</text>
+        <text class="dialog-close" bindtap="closeCreate">✕</text>
+      </view>
+      <view class="form-group">
+        <text class="form-label">活动类型</text>
+        <view class="type-select-row">
+          <view wx:for="{{['running','cycling','reading','fitness','other']}}" wx:for-index="i" wx:key="*this"
+                class="type-option {{createForm.event_type === item ? 'type-active' : ''}}"
+                data-type="{{item}}" bindtap="selectType">
+            <text>{{['🏃 跑步','🚴 骑行','📖 读书','💪 减肥','🎯 其他'][i]}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="form-group">
+        <text class="form-label">挑战名称 *</text>
+        <input class="input-field" placeholder="如：7月跑步100公里" value="{{createForm.title}}" bindinput="onCreateInput" data-field="title" />
+      </view>
+      <view class="form-group">
+        <text class="form-label">目标值 *</text>
+        <view class="goal-row">
+          <input class="input-field goal-input" type="digit" placeholder="100" value="{{createForm.goal_value}}" bindinput="onCreateInput" data-field="goal_value" />
+          <input class="input-field goal-unit" placeholder="公里" value="{{createForm.unit}}" bindinput="onCreateInput" data-field="unit" />
+        </view>
+      </view>
+      <view class="form-group">
+        <text class="form-label">描述</text>
+        <input class="input-field" placeholder="挑战说明" value="{{createForm.description}}" bindinput="onCreateInput" data-field="description" />
+      </view>
+      <view class="form-group">
+        <text class="form-label">截止日期</text>
+        <picker mode="date" value="{{createForm.deadline}}" bindchange="onDeadlineChange">
+          <view class="picker-value">{{createForm.deadline || '选择截止日期'}}</view>
+        </picker>
+      </view>
+      <view class="switch-row">
+        <text>团队赛（可多人参与）</text>
+        <switch checked="{{createForm.is_team_event}}" bindchange="onTeamSwitch" color="#6c63ff" />
+      </view>
+      <button class="btn-primary" bindtap="submitCreate" loading="{{submitting}}">🏆 发起挑战</button>
+    </view>
+  </view>
+</view>

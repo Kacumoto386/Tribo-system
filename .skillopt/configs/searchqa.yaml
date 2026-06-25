@@ -1,0 +1,33 @@
+_base_: _base_.yaml
+
+model:
+  reasoning_effort: medium
+
+train:
+  train_size: 0
+  batch_size: 2
+  accumulation: 1
+
+gradient:
+  minibatch_size: 2
+  merge_batch_size: 2
+
+optimizer:
+  learning_rate: 1
+
+evaluation:
+  sel_env_num: 0
+  test_env_num: 0
+
+env:
+  name: searchqa
+  skill_init: "C:/Users/12225/.claude/projects/Tribo-system/.skillopt/initial_skill.md"
+  split_mode: ratio
+  data_path: "C:/Users/12225/.claude/projects/Tribo-system/.skillopt/test_searchqa.json"
+  split_dir: ""
+  split_output_dir: ""
+  max_turns: 1
+  max_completion_tokens: 4096
+  workers: 1
+  limit: 2
+  out_root: "C:/Users/12225/skillopt_outputs/test_run"

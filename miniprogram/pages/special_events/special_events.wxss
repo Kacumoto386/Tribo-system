@@ -1,0 +1,232 @@
+.page {
+  padding: 20px 0 100px;
+}
+
+/* 创建入口 */
+.add-event-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 2px dashed var(--border);
+}
+
+/* 类型筛选 */
+.filter-row {
+  display: flex;
+  gap: 6px;
+  padding: 0 16px 12px;
+  flex-wrap: wrap;
+}
+
+.filter-tab {
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: var(--bg-card);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.filter-active {
+  background: var(--primary);
+  color: white;
+  font-weight: 600;
+}
+
+/* 活动卡片 */
+.event-card {
+  margin-bottom: 10px;
+}
+
+.ec-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.ec-type-tag {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.ec-title {
+  font-size: 17px;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.ec-progress-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.ec-progress-bar {
+  flex: 1;
+  height: 10px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.ec-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), #ff6b9d);
+  border-radius: 5px;
+  transition: width 0.5s;
+}
+
+.ec-progress-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--primary-light);
+  width: 44px;
+  text-align: right;
+}
+
+.ec-footer {
+  display: flex;
+  gap: 16px;
+}
+
+.ec-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* 弹窗 */
+.dialog-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.dialog-box {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 24px;
+  width: 85%;
+  max-width: 360px;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.dialog-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.dialog-close {
+  font-size: 20px;
+  color: var(--text-muted);
+  padding: 4px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  display: block;
+}
+
+.input-field {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: 15px;
+  color: var(--text-primary);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.goal-row {
+  display: flex;
+  gap: 8px;
+}
+
+.goal-input {
+  flex: 1;
+}
+
+.goal-unit {
+  width: 100px;
+  flex: none;
+}
+
+.type-select-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.type-option {
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.04);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.type-active {
+  background: var(--primary);
+  color: white;
+  font-weight: 600;
+}
+
+.switch-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.picker-value {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: 15px;
+  color: var(--text-primary);
+}
+
+.dialog-wide {
+  width: 90%;
+  max-width: 420px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 16px;
+}
+
+.empty-text {
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+.empty-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 8px;
+  display: block;
+}

@@ -1,0 +1,569 @@
+<!-- 活动详情页 -->
+<view class="page">
+  <!-- 活动头部 -->
+  <view class="activity-header">
+    <text class="ah-title">{{activity.title}}</text>
+    <view class="ah-meta-row">
+      <text wx:if="{{activity.location}}" class="ah-meta">📍 {{activity.location}}</text>
+      <text class="ah-meta">🕐 {{activity._displayDate || activity.activity_date}}</text>
+        <text wx:if="{{activity._displayEndDate}}" class="ah-meta">⏹ {{activity._displayEndDate}}</text>
+      <text class="ah-meta" wx:if="{{activity.max_participants > 0}}">👥 {{activity.participant_count}}/{{activity.max_participants}}</text>
+    </view>
+    <view class="ah-meta-row">
+      <view class="tag {{activity.status === 1 ? 'tag-success' : activity.status === 2 ? 'tag-danger' : 'tag-info'}}">
+        {{['招募中','进行中','已结束','已取消','已下架'][activity.status] || '招募中'}}
+      </view>
+    </view>
+    <view wx:if="{{activity.description}}" class="ah-desc">{{activity.description}}</view>
+    <view class="ah-stats">
+      <text class="ah-stat">📋 报名 {{activity.participant_count}}人</text>
+      <text class="ah-stat">✅ 签到 {{activity.checked_in_count}}人</text>
+    </view>
+  </view>
+
+  <!-- Tab 切换 -->
+  <view class="tab-row">
+    <view wx:for="{{['概览','物资','场地','任务','采购']}}" wx:key="index"
+          class="tab-item {{currentTab === index ? 'tab-active' : ''}}"
+          data-index="{{index}}" bindtap="switchTab">
+      <text>{{item}}</text>
+    </view>
+  </view>
+
+  <!-- ====== 概览 Tab ====== -->
+  <view wx:if="{{currentTab === 0}}">
+    <!-- 参与人 -->
+    <view class="participant-section">
+      <text class="p-section-title">👥 参与成员 ({{participants.length}})</text>
+      <view wx:for="{{participants}}" wx:key="id" class="participant-item">
+        <view class="pi-avatar">{{item.initial}}</view>
+        <text class="pi-name">{{item.nickname || item.user_id}}</text>
+        <text class="pi-status tag {{item.role === 2 ? 'tag-danger' : item.role === 1 ? 'tag-warning' : 'tag-info'}}">
+          {{['成员','管理员','群主'][item.role] || '成员'}}
+        </text>
+      </view>
+    </view>
+
+    <!-- 评论区 -->
+    <view class="comment-section">
+      <text class="p-section-title">💬 评论 ({{comments.length}})</text>
+      <view wx:for="{{comments}}" wx:key="id" class="comment-item">
+        <text class="comment-user">{{item.nickname || item.user_id}}</text>
+        <text class="comment-text">{{item.content}}</text>
+      </view>
+      <view class="comment-input-row">
+        <input class="comment-input" placeholder="说点什么..."
+               value="{{commentText}}" bindinput="onCommentInput" />
+        <button class="btn-primary" size="mini" bindtap="submitComment">发送</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- ====== 物资 Tab ====== -->
+  <view wx:elif="{{currentTab === 1}}">
+    <view class="card add-bar" bindtap="showCreateResourceDialog">
+      <text class="add-icon">📦</text>
+      <text class="add-text">添加物资</text>
+    </view>
+
+    <view wx:for="{{resources}}" wx:key="id" class="card resource-card">
+      <view class="rc-header">
+        <text class="rc-name">{{item.name}}</text>
+        <view class="tag {{item.status === 2 ? 'tag-success' : item.status === 1 ? 'tag-warning' : 'tag-info'}}">
+          {{['待准备','已采购','已到位'][item.status] || '待准备'}}
+        </view>
+      </view>
+      <view class="rc-meta">
+        <text>📂 {{item.category || '未分类'}}</text>
+        <text>📦 {{item.assigned_quantity}}/{{item.total_quantity}} {{item.unit}}</text>
+      </view>
+      <view class="rc-progress">
+        <view class="rc-progress-bar" style="width: {{item.total_quantity > 0 ? (item.assigned_quantity / item.total_quantity * 100) : 0}}%"></view>
+      </view>
+      <view wx:if="{{item.remark}}" class="rc-meta">📝 {{item.remark}}</view>
+
+      <!-- 分派列表 -->
+      <view wx:for="{{item._assignments}}" wx:key="id" class="rc-assign-item">
+        <text>➡ {{item._nickname || item.user_id}} x{{item.quantity}} · {{['待领取','已领取','已归还'][item.status] || '待领取'}}</text>
+      </view>
+
+      <view class="rc-actions">
+        <button class="btn-primary small-btn" size="mini" data-id="{{item.id}}" bindtap="showAssignDialog">分派</button>
+        <button class="btn-secondary small-btn" size="mini" data-id="{{item.id}}" bindtap="deleteResource">删除</button>
+      </view>
+    </view>
+
+    <view wx:if="{{resources.length === 0}}" class="empty-state">
+      <text class="empty-text">暂无物资</text>
+      <text class="empty-sub">点击上方添加活动物资</text>
+    </view>
+  </view>
+
+  <!-- ====== 场地 Tab ====== -->
+  <view wx:elif="{{currentTab === 2}}">
+    <view wx:if="{{venue}}">
+      <view class="card venue-card">
+        <view class="rc-header">
+          <text class="rc-name">{{venue.name}}</text>
+          <view class="tag {{venue.status === 1 ? 'tag-success' : venue.status === 2 ? 'tag-danger' : 'tag-info'}}">
+            {{['待确认','已确认','已取消'][venue.status] || '待确认'}}
+          </view>
+        </view>
+        <view wx:if="{{venue.address}}" class="vc-field">
+          <text class="vc-label">📍 地址：</text>
+          <text class="vc-value">{{venue.address}}</text>
+        </view>
+        <view wx:if="{{venue.capacity > 0}}" class="vc-field">
+          <text class="vc-label">👥 容量：</text>
+          <text class="vc-value">{{venue.capacity}} 人</text>
+        </view>
+        <view wx:if="{{venue.setup_time}}" class="vc-field">
+          <text class="vc-label">🕐 布设时间：</text>
+          <text class="vc-value">{{venue.setup_time}}</text>
+        </view>
+        <view wx:if="{{venue.contact_name}}" class="vc-field">
+          <text class="vc-label">📞 联系人：</text>
+          <text class="vc-value">{{venue.contact_name}} {{venue.contact_phone}}</text>
+        </view>
+        <view wx:if="{{venue.setup_requirements}}" class="vc-field">
+          <text class="vc-label">📋 布设要求：</text>
+          <text class="vc-value">{{venue.setup_requirements}}</text>
+        </view>
+        <view class="vc-actions">
+          <button class="btn-secondary small-btn" size="mini" bindtap="deleteVenue">删除场地</button>
+        </view>
+      </view>
+
+      <!-- 布设子项 -->
+      <view class="card add-bar" bindtap="showCreateSetupItemDialog">
+        <text class="add-icon">🔧</text>
+        <text class="add-text">添加布设项</text>
+      </view>
+
+      <view wx:for="{{setupItems}}" wx:key="id" class="setup-item">
+        <view class="si-check {{item.status === 1 ? 'done' : ''}}" data-id="{{item.id}}" bindtap="toggleSetupItem"></view>
+        <view class="si-info">
+          <text class="si-name">{{item.name}}</text>
+          <text wx:if="{{item.assigned_to}}" class="si-assignee">负责人: {{item._assigned_nickname}}</text>
+        </view>
+        <text class="ac-cancel" data-id="{{item.id}}" bindtap="deleteSetupItem">删除</text>
+      </view>
+
+      <view wx:if="{{setupItems.length === 0}}" class="empty-state">
+        <text class="empty-text">暂无布设项</text>
+        <text class="empty-sub">点击上方添加布设子项</text>
+      </view>
+    </view>
+
+    <view wx:else>
+      <view class="card add-bar" bindtap="showCreateVenueDialog">
+        <text class="add-icon">🏟️</text>
+        <text class="add-text">设置场地</text>
+      </view>
+      <view class="empty-state">
+        <text class="empty-text">暂未设置场地</text>
+        <text class="empty-sub">点击上方添加活动场地信息</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ====== 任务 Tab ====== -->
+  <view wx:elif="{{currentTab === 3}}">
+    <view class="card add-bar" bindtap="showCreateTaskDialog">
+      <text class="add-icon">📋</text>
+      <text class="add-text">发布任务</text>
+    </view>
+
+    <!-- 筛选 -->
+    <view class="ac-meta-row" style="padding: 0 16px 10px;">
+      <view class="tag {{filterTaskStatus === -1 ? 'tag-primary' : 'tag-info'}}" data-status="-1" bindtap="onTaskFilterChange">全部</view>
+      <view class="tag {{filterTaskStatus === 0 ? 'tag-primary' : 'tag-info'}}" data-status="0" bindtap="onTaskFilterChange">待处理</view>
+      <view class="tag {{filterTaskStatus === 1 ? 'tag-primary' : 'tag-info'}}" data-status="1" bindtap="onTaskFilterChange">进行中</view>
+      <view class="tag {{filterTaskStatus === 2 ? 'tag-primary' : 'tag-info'}}" data-status="2" bindtap="onTaskFilterChange">已完成</view>
+    </view>
+
+    <view wx:for="{{_filteredTasks}}" wx:key="id" class="card task-card">
+      <view class="tc-header">
+        <text class="tc-title">{{item.title}}</text>
+        <view class="tag {{item.priority === 2 ? 'tag-danger' : item.priority === 1 ? 'tag-warning' : 'tag-info'}}">
+          {{['普通','重要','紧急'][item.priority] || '普通'}}
+        </view>
+      </view>
+      <view class="tc-meta">
+        <text>📌 {{['待处理','进行中','已完成','已取消'][item.status] || '待处理'}}</text>
+        <text wx:if="{{item.assigned_to}}">👤 {{item._assigned_nickname}}</text>
+        <text wx:if="{{item.deadline}}">⏰ {{item.deadline}}</text>
+      </view>
+      <view wx:if="{{item.description}}" class="tc-desc">{{item.description}}</view>
+      <view class="tc-actions">
+        <button wx:if="{{item.status === 0}}" class="btn-primary small-btn" size="mini" data-id="{{item.id}}" data-status="1" bindtap="updateTaskStatus">开始</button>
+        <button wx:if="{{item.status === 1}}" class="btn-success small-btn" size="mini" data-id="{{item.id}}" data-status="2" bindtap="updateTaskStatus">完成</button>
+        <button wx:if="{{item.status !== 2}}" class="btn-secondary small-btn" size="mini" data-id="{{item.id}}" data-status="3" bindtap="updateTaskStatus">取消</button>
+        <button wx:if="{{item.status === 2}}" class="btn-secondary small-btn" size="mini" data-id="{{item.id}}" data-status="0" bindtap="updateTaskStatus">重开</button>
+        <text class="ac-cancel" data-id="{{item.id}}" bindtap="deleteTask">删除</text>
+      </view>
+    </view>
+
+    <view wx:if="{{_filteredTasks.length === 0}}" class="empty-state">
+      <text class="empty-text">暂无任务</text>
+      <text class="empty-sub">点击上方发布第一个任务</text>
+    </view>
+  </view>
+
+  <!-- ====== 采购 Tab ====== -->
+  <view wx:elif="{{currentTab === 4}}">
+    <!-- 子标签 -->
+    <view class="ac-meta-row" style="padding: 0 16px 10px;">
+      <view class="tag {{procurementSubTab === 0 ? 'tag-primary' : 'tag-info'}}" data-tab="0" bindtap="switchProcurementSubTab">采购清单</view>
+      <view class="tag {{procurementSubTab === 1 ? 'tag-primary' : 'tag-info'}}" data-tab="1" bindtap="switchProcurementSubTab">支出统计</view>
+    </view>
+
+    <!-- 子标签 0：采购清单 -->
+    <view wx:if="{{procurementSubTab === 0}}">
+      <view class="card add-bar" bindtap="showCreateProcurementDialog">
+        <text class="add-icon">🛒</text>
+        <text class="add-text">添加采购项</text>
+      </view>
+
+      <view class="ac-meta-row" style="padding: 0 16px 10px;">
+        <view class="tag {{filterProcStatus === -1 ? 'tag-primary' : 'tag-info'}}" data-status="-1" bindtap="onProcFilterChange">全部</view>
+        <view class="tag {{filterProcStatus === 0 ? 'tag-primary' : 'tag-info'}}" data-status="0" bindtap="onProcFilterChange">待采购</view>
+        <view class="tag {{filterProcStatus === 2 ? 'tag-primary' : 'tag-info'}}" data-status="2" bindtap="onProcFilterChange">已认领</view>
+        <view class="tag {{filterProcStatus === 3 ? 'tag-primary' : 'tag-info'}}" data-status="3" bindtap="onProcFilterChange">已完成</view>
+      </view>
+
+      <view wx:for="{{_filteredProcurements}}" wx:key="id" class="card proc-card">
+        <view class="pc-header">
+          <text class="pc-name">{{item.name}}</text>
+          <view class="tag {{item.status === 3 ? 'tag-success' : item.status >= 1 ? 'tag-warning' : 'tag-info'}}">
+            {{['待采购','部分认领','已购齐','已完成'][item.status] || '待采购'}}
+          </view>
+        </view>
+        <view class="pc-meta">
+          <text>📂 {{item.category || '未分类'}}</text>
+          <text>💰 预估 ¥{{item.estimated_cost}}/{{item.unit}}</text>
+        </view>
+        <view class="pc-meta">
+          <text>📦 {{item.claimed_quantity}}/{{item.total_quantity}} {{item.unit}}</text>
+        </view>
+        <view class="rc-progress">
+          <view class="rc-progress-bar" style="width: {{item.total_quantity > 0 ? (item.claimed_quantity / item.total_quantity * 100) : 0}}%"></view>
+        </view>
+        <view wx:if="{{item.remark}}" class="pc-meta">📝 {{item.remark}}</view>
+
+        <!-- 认领列表 -->
+        <view wx:for="{{item._claims}}" wx:key="id" class="pc-claim-item">
+          <view class="pci-left">
+            <text>➡ {{item._nickname || item.user_id}} x{{item.quantity}}</text>
+            <text wx:if="{{item.actual_cost != null}}" class="pci-cost"> 💰 ¥{{item.actual_cost}}</text>
+            <text class="tag {{item.status === 2 ? 'tag-success' : item.status === 1 ? 'tag-warning' : 'tag-info'}}" style="font-size:11px;padding:1px 6px;">
+              {{['已认领','已购买','已确认'][item.status] || '已认领'}}
+            </text>
+          </view>
+          <view class="pci-actions">
+            <button wx:if="{{item.status === 0}}" class="btn-primary small-btn" size="mini" data-id="{{item.id}}" bindtap="markClaimPurchased">已购买</button>
+            <button wx:if="{{item.status === 1}}" class="btn-success small-btn" size="mini" data-id="{{item.id}}" bindtap="confirmClaim">确认</button>
+            <text class="ac-cancel" data-id="{{item.id}}" bindtap="deleteClaim">删除</text>
+          </view>
+        </view>
+
+        <view class="pc-actions">
+          <button wx:if="{{item.claimed_quantity < item.total_quantity}}" class="btn-primary small-btn" size="mini" data-id="{{item.id}}" bindtap="showClaimDialog">认领</button>
+          <text class="ac-cancel" data-id="{{item.id}}" bindtap="deleteProcurement">删除</text>
+        </view>
+      </view>
+
+      <view wx:if="{{_filteredProcurements.length === 0}}" class="empty-state">
+        <text class="empty-text">暂无采购项</text>
+        <text class="empty-sub">点击上方添加需要采购的物品</text>
+      </view>
+    </view>
+
+    <!-- 子标签 1：支出统计 -->
+    <view wx:if="{{procurementSubTab === 1}}">
+      <view class="card stats-summary-card">
+        <text class="stats-title">📊 支出概况</text>
+        <view class="stats-row">
+          <text class="stats-label">采购项数：</text>
+          <text class="stats-value">{{expenseStats.item_count || 0}}</text>
+        </view>
+        <view class="stats-row">
+          <text class="stats-label">预估总价：</text>
+          <text class="stats-value muted">¥{{expenseStats.total_estimated || '0.00'}}</text>
+        </view>
+        <view class="stats-row">
+          <text class="stats-label">实际总价：</text>
+          <text class="stats-value primary">¥{{expenseStats.total_actual || '0.00'}}</text>
+        </view>
+        <view wx:if="{{expenseStats.participant_count > 0}}" class="stats-row">
+          <text class="stats-label">AA 人均：</text>
+          <text class="stats-value accent">¥{{expenseStats.per_person_share || '0.00'}}</text>
+          <text class="stats-note">（{{expenseStats.participant_count}}人均摊）</text>
+        </view>
+      </view>
+
+      <view wx:if="{{expenseStats.pending_count > 0}}" class="card stats-warning">
+        <text class="stats-label">⚠️ 还有 {{expenseStats.pending_count}} 项未完成采购，实际总价可能变化</text>
+      </view>
+
+      <view class="card" wx:if="{{expenseStats.by_person && expenseStats.by_person.length > 0}}">
+        <text class="stats-title">👤 个人支出明细</text>
+        <view wx:for="{{expenseStats.by_person}}" wx:key="user_id" class="person-row">
+          <text class="person-name">{{item._nickname || item.user_id}}</text>
+          <text class="person-spent">支出 ¥{{item.total_spent}}</text>
+          <text class="person-share">应摊 ¥{{item.share}}</text>
+          <text class="person-balance {{item._balanceClass}}">
+            {{item._balanceLabel}} ¥{{item._balanceDisplay}}
+          </text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ========== 弹窗 ========== -->
+
+  <!-- 创建物资 -->
+  <view wx:if="{{showCreateResource}}" class="dialog-mask" bindtap="closeCreateResource">
+    <view class="dialog-box dialog-wide" catchtap="prevent">
+      <view class="dialog-header">
+        <text class="dialog-title">📦 添加物资</text>
+        <text class="dialog-close" bindtap="closeCreateResource">✕</text>
+      </view>
+      <view class="dialog-scroll">
+        <view class="form-group">
+          <text class="form-label">物资名称 *</text>
+          <input class="input-field" placeholder="如：矿泉水" value="{{resourceForm.name}}" bindinput="onResInput" data-field="name" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">分类</text>
+          <input class="input-field" placeholder="设备/文具/食品/..." value="{{resourceForm.category}}" bindinput="onResInput" data-field="category" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">数量</text>
+          <input class="input-field" type="digit" value="{{resourceForm.total_quantity}}" bindinput="onResInput" data-field="total_quantity" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">单位</text>
+          <input class="input-field" value="{{resourceForm.unit}}" bindinput="onResInput" data-field="unit" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">备注</text>
+          <input class="input-field" placeholder="备注信息" value="{{resourceForm.remark}}" bindinput="onResInput" data-field="remark" />
+        </view>
+      </view>
+      <button class="btn-primary" bindtap="submitResource" loading="{{submittingRes}}">✅ 添加</button>
+    </view>
+  </view>
+
+  <!-- 物资分派 -->
+  <view wx:if="{{showAssign}}" class="dialog-mask" bindtap="closeAssign">
+    <view class="dialog-box dialog-wide" catchtap="prevent">
+      <view class="dialog-header">
+        <text class="dialog-title">➡ 分派物资</text>
+        <text class="dialog-close" bindtap="closeAssign">✕</text>
+      </view>
+      <view class="form-group">
+        <text class="form-label">选择成员（已选 {{assignSelectedMembers.length}} 人）</text>
+        <view class="member-check-list">
+          <view wx:for="{{memberListDisplay}}" wx:key="id" class="member-check-row" data-uid="{{item.id}}" data-key="assignSelectedMembers" bindtap="toggleMemberSelect">
+            <text class="member-check-box">{{item._sel ? '✔' : '○'}}</text>
+            <text class="member-check-label">{{item.label}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="form-group">
+        <text class="form-label">数量</text>
+        <input class="input-field" type="digit" value="{{assignForm.quantity}}" bindinput="onAssignInput" data-field="quantity" />
+      </view>
+      <view class="form-group">
+        <text class="form-label">备注</text>
+        <input class="input-field" placeholder="备注" value="{{assignForm.remark}}" bindinput="onAssignInput" data-field="remark" />
+      </view>
+      <button class="btn-primary" bindtap="submitAssignment" loading="{{submittingAssign}}">✅ 分派</button>
+    </view>
+  </view>
+
+  <!-- 创建场地 -->
+  <view wx:if="{{showCreateVenue}}" class="dialog-mask" bindtap="closeCreateVenue">
+    <view class="dialog-box dialog-wide" catchtap="prevent">
+      <view class="dialog-header">
+        <text class="dialog-title">🏟️ 设置场地</text>
+        <text class="dialog-close" bindtap="closeCreateVenue">✕</text>
+      </view>
+      <view class="dialog-scroll">
+        <view class="form-group">
+          <text class="form-label">场地名称 *</text>
+          <input class="input-field" placeholder="如：体育馆" value="{{venueForm.name}}" bindinput="onVenueInput" data-field="name" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">地址</text>
+          <input class="input-field" placeholder="详细地址" value="{{venueForm.address}}" bindinput="onVenueInput" data-field="address" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">容量（人数）</text>
+          <input class="input-field" type="digit" value="{{venueForm.capacity}}" bindinput="onVenueInput" data-field="capacity" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">布设时间</text>
+          <picker mode="date" value="{{venueForm.setup_time}}" bindchange="onVenueInput" data-field="setup_time">
+            <view class="picker-value">{{venueForm.setup_time || '请选择日期'}}</view>
+          </picker>
+        </view>
+        <view class="form-group">
+          <text class="form-label">布设要求</text>
+          <input class="input-field" placeholder="布设要求说明" value="{{venueForm.setup_requirements}}" bindinput="onVenueInput" data-field="setup_requirements" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">联系人</text>
+          <input class="input-field" placeholder="联系人姓名" value="{{venueForm.contact_name}}" bindinput="onVenueInput" data-field="contact_name" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">联系电话</text>
+          <input class="input-field" placeholder="手机号" value="{{venueForm.contact_phone}}" bindinput="onVenueInput" data-field="contact_phone" />
+        </view>
+      </view>
+      <button class="btn-primary" bindtap="submitVenue" loading="{{submittingVenue}}">✅ 创建</button>
+    </view>
+  </view>
+
+  <!-- 创建布设项 -->
+  <view wx:if="{{showCreateSetupItem}}" class="dialog-mask" bindtap="closeCreateSetupItem">
+    <view class="dialog-box dialog-wide" catchtap="prevent">
+      <view class="dialog-header">
+        <text class="dialog-title">🔧 添加布设项</text>
+        <text class="dialog-close" bindtap="closeCreateSetupItem">✕</text>
+      </view>
+      <view class="form-group">
+        <text class="form-label">项目名称 *</text>
+        <input class="input-field" placeholder="如：搭建舞台" value="{{setupItemForm.name}}" bindinput="onSetupItemInput" data-field="name" />
+      </view>
+      <view class="form-group">
+        <text class="form-label">负责人（已选 {{setupSelectedMembers.length}} 人）</text>
+        <view class="member-check-list">
+          <view wx:for="{{memberListDisplay}}" wx:key="id" class="member-check-row" data-uid="{{item.id}}" data-key="setupSelectedMembers" bindtap="toggleMemberSelect">
+            <text class="member-check-box">{{item._sel ? '✔' : '○'}}</text>
+            <text class="member-check-label">{{item.label}}</text>
+          </view>
+        </view>
+      </view>
+      <button class="btn-primary" bindtap="submitSetupItem" loading="{{submittingSetupItem}}">✅ 添加</button>
+    </view>
+  </view>
+
+  <!-- 创建任务 -->
+  <view wx:if="{{showCreateTask}}" class="dialog-mask" bindtap="closeCreateTask">
+    <view class="dialog-box dialog-wide" catchtap="prevent">
+      <view class="dialog-header">
+        <text class="dialog-title">📋 发布任务</text>
+        <text class="dialog-close" bindtap="closeCreateTask">✕</text>
+      </view>
+      <view class="dialog-scroll">
+        <view class="form-group">
+          <text class="form-label">任务名称 *</text>
+          <input class="input-field" placeholder="任务标题" value="{{taskForm.title}}" bindinput="onTaskInput" data-field="title" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">描述</text>
+          <input class="input-field" placeholder="任务描述" value="{{taskForm.description}}" bindinput="onTaskInput" data-field="description" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">负责人（已选 {{taskSelectedMembers.length}} 人）</text>
+          <view class="member-check-list">
+            <view wx:for="{{memberListDisplay}}" wx:key="id" class="member-check-row" data-uid="{{item.id}}" data-key="taskSelectedMembers" bindtap="toggleMemberSelect">
+              <text class="member-check-box">{{item._sel ? '✔' : '○'}}</text>
+              <text class="member-check-label">{{item.label}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="form-group">
+          <text class="form-label">优先级</text>
+          <picker mode="selector" range="{{['普通','重要','紧急']}}" value="{{taskForm.priority}}" bindchange="onTaskPriorityChange">
+            <view class="picker-value">{{['普通','重要','紧急'][taskForm.priority] || '普通'}}</view>
+          </picker>
+        </view>
+        <view class="form-group">
+          <text class="form-label">截止日期</text>
+          <picker mode="date" value="{{taskForm.deadline}}" bindchange="onTaskInput" data-field="deadline">
+            <view class="picker-value">{{taskForm.deadline || '请选择日期'}}</view>
+          </picker>
+        </view>
+      </view>
+      <button class="btn-primary" bindtap="submitTask" loading="{{submittingTask}}">✅ 发布</button>
+    </view>
+  </view>
+
+  <!-- 创建采购项 -->
+  <view wx:if="{{showCreateProcurement}}" class="dialog-mask" bindtap="closeCreateProcurement">
+    <view class="dialog-box dialog-wide" catchtap="prevent">
+      <view class="dialog-header">
+        <text class="dialog-title">🛒 添加采购项</text>
+        <text class="dialog-close" bindtap="closeCreateProcurement">✕</text>
+      </view>
+      <view class="dialog-scroll">
+        <view class="form-group">
+          <text class="form-label">物品名称 *</text>
+          <input class="input-field" placeholder="如：矿泉水" value="{{procurementForm.name}}" bindinput="onProcurementInput" data-field="name" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">分类</text>
+          <input class="input-field" placeholder="食材/饮料/工具/其他" value="{{procurementForm.category}}" bindinput="onProcurementInput" data-field="category" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">数量</text>
+          <input class="input-field" type="digit" value="{{procurementForm.total_quantity}}" bindinput="onProcurementInput" data-field="total_quantity" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">单位</text>
+          <input class="input-field" value="{{procurementForm.unit}}" bindinput="onProcurementInput" data-field="unit" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">预估单价（¥）</text>
+          <input class="input-field" type="digit" placeholder="0.00" value="{{procurementForm.estimated_cost}}" bindinput="onProcurementInput" data-field="estimated_cost" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">备注</text>
+          <input class="input-field" placeholder="备注信息" value="{{procurementForm.remark}}" bindinput="onProcurementInput" data-field="remark" />
+        </view>
+      </view>
+      <button class="btn-primary" bindtap="submitProcurement" loading="{{submittingProcurement}}">✅ 添加</button>
+    </view>
+  </view>
+
+  <!-- 认领采购 -->
+  <view wx:if="{{showClaimProcurement}}" class="dialog-mask" bindtap="closeClaimProcurement">
+    <view class="dialog-box dialog-wide" catchtap="prevent">
+      <view class="dialog-header">
+        <text class="dialog-title">✅ 认领采购</text>
+        <text class="dialog-close" bindtap="closeClaimProcurement">✕</text>
+      </view>
+      <view class="form-group">
+        <text class="form-label">认领数量</text>
+        <input class="input-field" type="digit" value="{{claimForm.quantity}}" bindinput="onClaimInput" data-field="quantity" />
+      </view>
+      <view class="form-group">
+        <text class="form-label">备注</text>
+        <input class="input-field" placeholder="如：我去买" value="{{claimForm.remark}}" bindinput="onClaimInput" data-field="remark" />
+      </view>
+      <button class="btn-primary" bindtap="submitClaim" loading="{{submittingClaim}}">✅ 认领</button>
+    </view>
+  </view>
+
+  <!-- 标记已购买 -->
+  <view wx:if="{{showPurchasedDialog}}" class="dialog-mask" bindtap="closePurchasedDialog">
+    <view class="dialog-box dialog-wide" catchtap="prevent">
+      <view class="dialog-header">
+        <text class="dialog-title">💰 填写购买信息</text>
+        <text class="dialog-close" bindtap="closePurchasedDialog">✕</text>
+      </view>
+      <view class="form-group">
+        <text class="form-label">实际总花费（¥）</text>
+        <input class="input-field" type="digit" placeholder="0.00" value="{{purchasedForm.actual_cost}}" bindinput="onPurchasedInput" data-field="actual_cost" />
+      </view>
+      <view class="form-group">
+        <text class="form-label">小票图片 URL</text>
+        <input class="input-field" placeholder="粘贴小票图片链接" value="{{purchasedForm.receipt_url}}" bindinput="onPurchasedInput" data-field="receipt_url" />
+      </view>
+      <button class="btn-primary" bindtap="submitPurchased" loading="{{submittingClaim}}">✅ 提交</button>
+    </view>
+  </view>
+</view>

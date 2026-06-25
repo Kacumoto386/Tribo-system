@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm -f backend/app/models/workout.py backend/app/models/habit.py backend/app/models/ops.py)",
+      "Bash(rm -f backend/app/routers/workout.py backend/app/routers/habit.py backend/app/routers/ops.py)",
+      "Bash(rm -f backend/app/schemas/workout.py backend/app/schemas/habit.py backend/app/schemas/ops.py)",
+      "Bash(rm -f backend/_debug_event.py)",
+      "Bash(python -c \"import fastapi; print\\('ok'\\)\")",
+      "Bash(python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload)",
+      "Bash(curl -s http://localhost:8000/health)",
+      "Bash(pip install *)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(curl -s https://api.github.com/repos/linshenkx/prompt-optimizer/readme)",
+      "Bash(python -c \"import sys,json,base64; d=json.load\\(sys.stdin\\); print\\(base64.b64decode\\(d.get\\('content',''\\)\\).decode\\(\\)\\)\")",
+      "Bash(mkdir -p \"/c/Users/12225/.claude/projects/Tribo-system/miniprogram/pages/activity_detail\")"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\12225\\.claude\\projects\\Tribo-system\\miniprogram\\pages"
+    ]
+  }
+}

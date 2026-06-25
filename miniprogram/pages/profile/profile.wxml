@@ -1,0 +1,84 @@
+<!-- 个人中心 -->
+<view class="page">
+  <view class="profile-header">
+    <view class="avatar-large">
+      <text class="avatar-text-large">{{initial}}</text>
+    </view>
+    <text class="profile-name">{{userInfo.nickname || 'Tribo 用户'}}</text>
+    <text class="profile-id" bindtap="copyUserId" data-id="{{userInfo.id || '10001'}}">ID: {{userInfo.id || '10001'}} 📋复制</text>
+  </view>
+
+  <!-- 通知入口 -->
+  <view class="card entrance-card" bindtap="goNotifications">
+    <view class="entrance-left">
+      <text class="entrance-icon">🔔</text>
+      <view>
+        <text class="entrance-title">通知中心</text>
+        <text class="entrance-sub">{{unreadCount > 0 ? unreadCount + ' 条未读' : '暂无未读'}}</text>
+      </view>
+    </view>
+    <view wx:if="{{unreadCount > 0}}" class="badge-dot"></view>
+    <text class="menu-arrow">›</text>
+  </view>
+
+  <!-- 专项挑战入口 -->
+  <view class="card entrance-card" bindtap="goSpecialEvents">
+    <view class="entrance-left">
+      <text class="entrance-icon">🏆</text>
+      <view>
+        <text class="entrance-title">专项挑战</text>
+        <text class="entrance-sub">团队目标 / 进度追踪</text>
+      </view>
+    </view>
+    <text class="menu-arrow">›</text>
+  </view>
+
+  <!-- 成就入口 -->
+  <view class="card entrance-card" bindtap="goAchievements">
+    <view class="entrance-left">
+      <text class="entrance-icon">🏅</text>
+      <view>
+        <text class="entrance-title">成就殿堂</text>
+        <text class="entrance-sub">{{achievementSummary}}</text>
+      </view>
+    </view>
+    <text class="menu-arrow">›</text>
+  </view>
+
+  <!-- 已撤回团队入口 -->
+  <view class="card entrance-card" bindtap="goArchivedTeams">
+    <view class="entrance-left">
+      <text class="entrance-icon">📂</text>
+      <view>
+        <text class="entrance-title">已撤回的团队</text>
+        <text class="entrance-sub">管理已撤回的团队</text>
+      </view>
+    </view>
+    <text class="menu-arrow">›</text>
+  </view>
+
+  <!-- 设置列表 -->
+  <view class="card menu-list">
+    <view class="menu-item" bindtap="setNickname">
+      <text class="menu-icon">✏️</text>
+      <text class="menu-text">昵称</text>
+      <text class="menu-value">{{userInfo.nickname || '未设置'}}</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-divider"></view>
+    <view class="menu-item" bindtap="showAbout">
+      <text class="menu-icon">ℹ️</text>
+      <text class="menu-text">关于 Tribo</text>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 服务器状态 -->
+  <view class="card server-status">
+    <view class="status-row">
+      <text class="status-dot {{serverOk ? 'dot-green' : 'dot-red'}}"></text>
+      <text>{{serverOk ? '后端服务正常' : '后端未连接'}}</text>
+    </view>
+    <text class="version-text">Tribo v1.1.5</text>
+  </view>
+</view>

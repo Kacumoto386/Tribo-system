@@ -1,0 +1,304 @@
+<!-- 团队详情页 -->
+<view class="page">
+  <!-- 团队头部 -->
+  <view class="team-header">
+    <view class="th-avatar">{{team.initial || 'T'}}</view>
+    <view class="th-info">
+      <text class="th-name">{{team.name}}</text>
+      <text class="th-desc">{{team.description || '暂无简介'}}</text>
+      <view class="th-meta">
+        <text>👤 {{team.member_count || 1}} 人</text>
+        <text>🔑 {{team.invite_code}}</text>
+        <text class="copy-hint" data-code="{{team.invite_code}}" bindtap="copyInviteCode">📋 复制</text>
+      </view>
+    </view>
+    <view class="th-actions">
+      <button class="share-btn" open-type="share">↗</button>
+      <text wx:if="{{currentUserId === '10001' || currentUserId === 'dev_user_001' || team.owner_id === currentUserId}}" class="th-edit-btn" bindtap="showEditTeamDialog">编辑</text>
+      <text wx:if="{{team.status === 0}}" class="th-restore-btn" bindtap="restoreTeam">恢复</text>
+      <text wx:elif="{{currentUserId === '10001' || currentUserId === 'dev_user_001' || team.owner_id === currentUserId}}" class="th-archive-btn" bindtap="archiveTeam">撤回</text>
+      <text wx:elif="{{team.status !== 0 && team.owner_id !== currentUserId}}" class="th-leave-btn" bindtap="leaveTeam">退出</text>
+    </view>
+    </view>
+  </view>
+
+  <!-- Tab 切换 -->
+  <view class="tab-row">
+    <view wx:for="{{['活动','公告','成员']}}" wx:key="index"
+          class="tab-item {{currentTab === index ? 'tab-active' : ''}}"
+          data-index="{{index}}" bindtap="switchTab">
+      <text>{{item}}</text>
+    </view>
+  </view>
+
+  <!-- ====== 活动列表 Tab ====== -->
+  <view wx:if="{{currentTab === 0}}">
+    <view class="card add-activity-bar" bindtap="showCreateActivity">
+      <text class="add-icon">📅</text>
+      <text class="add-text">发布新活动</text>
+    </view>
+
+    <view wx:for="{{activities}}" wx:key="id" class="card activity-card" data-id="{{item.id}}" bindtap="goToActivity">
+      <view class="ac-header">
+        <text class="ac-title">{{item.title}}</text>
+        <view class="tag {{item.status === 1 ? 'tag-success' : item.status === 2 ? 'tag-danger' : item.status === 4 ? 'tag-warning' : 'tag-info'}}">
+          {{['招募中','进行中','已结束','已取消','已下架'][item.status] || '招募中'}}
+        </view>
+      </view>
+      <view class="ac-meta-row">
+        <text wx:if="{{item.location}}" class="ac-meta">📍 {{item.location}}</text>
+        <text class="ac-meta">🕐 {{item._displayDate}}</text>
+        <text class="ac-meta" wx:if="{{item.max_participants > 0}}">
+          👥 {{item.participant_count || 0}}/{{item.max_participants}}
+        </text>
+      </view>
+      <view wx:if="{{item.description}}" class="ac-desc">{{item.description}}</view>
+      <view class="ac-stats">
+        <text class="ac-stat">✅ 签到 {{item.checked_in_count || 0}}人</text>
+        <text class="ac-stat">📋 报名 {{item.participant_count || 0}}人</text>
+      </view>
+      <view class="ac-actions" catchtap>
+        <button wx:if="{{item.my_status === undefined || item.my_status === 2}}"
+                class="btn-primary ac-btn" size="mini" data-id="{{item.id}}" bindtap="signupActivity">
+          📝 报名
+        </button>
+        <button wx:elif="{{item.my_status === 0}}"
+                class="btn-secondary ac-btn" size="mini" data-id="{{item.id}}" bindtap="checkinActivity">
+          ✅ 签到
+        </button>
+        <view wx:elif="{{item.my_status === 1}}" class="tag tag-success ac-checked-tag">已签到 🎉</view>
+        <text wx:if="{{item.my_status === 0}}" class="ac-cancel" data-id="{{item.id}}" bindtap="cancelSignup">取消报名</text>
+        <button class="btn-primary ac-btn" size="mini" data-id="{{item.id}}" bindtap="goToActivity">详情</button>
+        <button wx:if="{{item.created_by === currentUserId || item.created_by === '10001' || item.created_by === 'dev_user_001'}}" class="btn-secondary ac-btn" size="mini" data-id="{{item.id}}" bindtap="showEditActivity">编辑</button>
+        <button wx:if="{{item.status === 4}}" class="btn-success ac-btn" size="mini" data-id="{{item.id}}" bindtap="restoreActivity">重新上架</button>
+        <button wx:elif="{{item.created_by === currentUserId || item.created_by === '10001' || item.created_by === 'dev_user_001'}}" class="btn-secondary ac-btn" size="mini" data-id="{{item.id}}" bindtap="archiveActivity">下架</button>
+      </view>
+
+      <!-- 评论区域 -->
+      <view class="ac-comment-toggle" data-id="{{item.id}}" bindtap="toggleComments" catchtap>
+        <text>💬 评论</text>
+        <text class="ac-comment-count">({{item._commentCount}})</text>
+      </view>
+      <view wx:if="{{item._expanded}}" class="ac-comment-section" catchtap>
+        <view wx:for="{{item._comments}}" wx:key="id" class="ac-comment-item">
+          <text class="ac-comment-user">{{item.nickname || item.user_id}}</text>
+          <text class="ac-comment-text">{{item.content}}</text>
+        </view>
+        <view class="ac-comment-input-row">
+          <input class="ac-comment-input" placeholder="说点什么..."
+                 value="{{item._commentInput}}"
+                 bindinput="onCommentInput" data-id="{{item.id}}" />
+          <button class="btn-primary ac-comment-send" size="mini"
+                  data-id="{{item.id}}" bindtap="submitComment">发送</button>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{activities.length === 0}}" class="empty-state">
+      <text class="empty-text">还没有活动</text>
+      <text class="empty-sub">点击上方发布第一个团队活动吧！</text>
+    </view>
+  </view>
+
+  <!-- ====== 公告列表 Tab ====== -->
+  <view wx:elif="{{currentTab === 1}}">
+    <view class="card add-activity-bar" bindtap="showCreateAnnouncement">
+      <text class="add-icon">📢</text>
+      <text class="add-text">发布公告</text>
+    </view>
+
+    <view wx:for="{{announcements}}" wx:key="id" class="card announcement-card">
+      <view class="ann-header">
+        <text class="ann-title">{{item.title}}</text>
+        <view wx:if="{{item.is_pinned}}" class="tag tag-warning">置顶</view>
+      </view>
+      <view class="ann-content">{{item.content}}</view>
+      <view class="ann-meta">
+        <text>{{item.creator_nickname || item.created_by}}</text>
+        <text>{{item.created_at}}</text>
+      </view>
+    </view>
+
+    <view wx:if="{{announcements.length === 0}}" class="empty-state">
+      <text class="empty-text">暂无公告</text>
+    </view>
+  </view>
+
+  <!-- ====== 成员列表 Tab ====== -->
+  <view wx:elif="{{currentTab === 2}}">
+    <view wx:for="{{members}}" wx:key="id" class="card member-card" data-userid="{{item.user_id}}" bindtap="tapMemberCard">
+      <view class="mc-avatar">{{item.initial}}</view>
+      <view class="mc-info">
+        <text class="mc-name">{{item.nickname || item.user_id}}</text>
+        <text class="mc-role">{{['成员','管理员','群主'][item.role] || '成员'}}</text>
+      </view>
+      <text class="tag {{item.role === 2 ? 'tag-danger' : item.role === 1 ? 'tag-warning' : 'tag-info'}}">
+        {{['成员','管理员','群主'][item.role] || '成员'}}
+      </text>
+    </view>
+  </view>
+
+  <!-- 发布活动弹窗 -->
+  <view wx:if="{{showCreateActivity}}" class="dialog-mask" bindtap="closeCreateActivity">
+    <view class="dialog-box dialog-wide" catchtap>
+      <view class="dialog-header">
+        <text class="dialog-title">📅 发布活动</text>
+        <text class="dialog-close" bindtap="closeCreateActivity">✕</text>
+      </view>
+      <view class="form-group">
+        <text class="form-label">活动名称 *</text>
+        <input class="input-field" placeholder="如：团队会议" value="{{activityForm.title}}" bindinput="onActInput" data-field="title" />
+      </view>
+      <view class="form-group">
+        <text class="form-label">活动描述</text>
+        <input class="input-field" placeholder="活动详情" value="{{activityForm.description}}" bindinput="onActInput" data-field="description" />
+      </view>
+      <view class="form-group">
+        <text class="form-label">地点</text>
+        <input class="input-field" placeholder="如：会议室 301" value="{{activityForm.location}}" bindinput="onActInput" data-field="location" />
+      </view>
+      <view class="form-group">
+        <text class="form-label">活动时间 *</text>
+        <view class="dt-row">
+          <picker mode="date" value="{{activityForm.date}}" bindchange="onActDateChange">
+            <view class="picker-value dt-date">{{activityForm.date}}</view>
+          </picker>
+          <picker mode="time" value="{{activityForm.time}}" bindchange="onActTimeChange">
+            <view class="picker-value dt-time">{{activityForm.time}}</view>
+          </picker>
+        </view>
+      </view>
+      <view class="form-group">
+        <text class="form-label">结束时间</text>
+        <view class="dt-row">
+          <picker mode="date" value="{{activityForm.endDate}}" bindchange="onActEndDateChange">
+            <view class="picker-value dt-date">{{activityForm.endDate || '日期'}}</view>
+          </picker>
+          <picker mode="time" value="{{activityForm.endTime}}" bindchange="onActEndTimeChange">
+            <view class="picker-value dt-time">{{activityForm.endTime || '23:59'}}</view>
+          </picker>
+        </view>
+      </view>
+      <view class="form-group">
+        <text class="form-label">人数上限（0 为不限）</text>
+        <input class="input-field" type="digit" placeholder="0" value="{{activityForm.max}}" bindinput="onActInput" data-field="max" />
+      </view>
+      <button class="btn-primary" bindtap="submitActivity" loading="{{submittingAct}}">✅ 发布活动</button>
+    </view>
+  </view>
+
+  <!-- 发布公告弹窗 -->
+  <view wx:if="{{showCreateAnnouncement}}" class="dialog-mask" bindtap="closeCreateAnnouncement">
+    <view class="dialog-box dialog-wide" catchtap>
+      <view class="dialog-header">
+        <text class="dialog-title">📢 发布公告</text>
+        <text class="dialog-close" bindtap="closeCreateAnnouncement">✕</text>
+      </view>
+      <view class="form-group">
+        <text class="form-label">公告标题 *</text>
+        <input class="input-field" placeholder="标题" value="{{announcementForm.title}}" bindinput="onAnnInput" data-field="title" />
+      </view>
+      <view class="form-group">
+        <text class="form-label">公告内容 *</text>
+        <input class="input-field" placeholder="内容" value="{{announcementForm.content}}" bindinput="onAnnInput" data-field="content" />
+      </view>
+      <button class="btn-primary" bindtap="submitAnnouncement" loading="{{submittingAnn}}">📢 发布公告</button>
+    </view>
+  </view>
+
+  <!-- 编辑团队弹窗 -->
+  <view wx:if="{{showEditTeam}}" class="dialog-mask" bindtap="closeEditTeam">
+    <view class="dialog-box dialog-wide" catchtap>
+      <view class="dialog-header">
+        <text class="dialog-title">📝 编辑团队</text>
+        <text class="dialog-close" bindtap="closeEditTeam">✕</text>
+      </view>
+      <view class="form-group">
+        <text class="form-label">团队名称 *</text>
+        <input class="input-field" placeholder="团队名称" value="{{editTeamForm.name}}" bindinput="onEditTeamInput" data-field="name" />
+      </view>
+      <view class="form-group">
+        <text class="form-label">团队简介</text>
+        <input class="input-field" placeholder="团队简介" value="{{editTeamForm.description}}" bindinput="onEditTeamInput" data-field="description" />
+      </view>
+      <button class="btn-primary" bindtap="submitEditTeam" loading="{{submittingEditTeam}}">✅ 保存修改</button>
+    </view>
+  </view>
+
+  <!-- 编辑活动弹窗 -->
+  <view wx:if="{{showEditActivity}}" class="dialog-mask" bindtap="closeEditActivity">
+    <view class="dialog-box dialog-wide" catchtap>
+      <view class="dialog-header">
+        <text class="dialog-title">📝 编辑活动</text>
+        <text class="dialog-close" bindtap="closeEditActivity">✕</text>
+      </view>
+      <view class="form-group">
+        <text class="form-label">活动名称 *</text>
+        <input class="input-field" placeholder="活动名称" value="{{editForm.title}}" bindinput="onEditInput" data-field="title" />
+      </view>
+      <view class="form-group">
+        <text class="form-label">活动描述</text>
+        <input class="input-field" placeholder="活动详情" value="{{editForm.description}}" bindinput="onEditInput" data-field="description" />
+      </view>
+      <view class="form-group">
+        <text class="form-label">地点</text>
+        <input class="input-field" placeholder="活动地点" value="{{editForm.location}}" bindinput="onEditInput" data-field="location" />
+      </view>
+      <view class="form-group">
+        <text class="form-label">活动时间 *</text>
+        <view class="dt-row">
+          <picker mode="date" value="{{editForm.date}}" bindchange="onEditDateChange">
+            <view class="picker-value dt-date">{{editForm.date}}</view>
+          </picker>
+          <picker mode="time" value="{{editForm.time}}" bindchange="onEditTimeChange">
+            <view class="picker-value dt-time">{{editForm.time}}</view>
+          </picker>
+        </view>
+      </view>
+      <view class="form-group">
+        <text class="form-label">结束时间</text>
+        <view class="dt-row">
+          <picker mode="date" value="{{editForm.endDate}}" bindchange="onEditEndDateChange">
+            <view class="picker-value dt-date">{{editForm.endDate || '日期'}}</view>
+          </picker>
+          <picker mode="time" value="{{editForm.endTime}}" bindchange="onEditEndTimeChange">
+            <view class="picker-value dt-time">{{editForm.endTime || '23:59'}}</view>
+        </picker>
+      </view>
+      </view>
+      <view class="form-group">
+        <text class="form-label">人数上限（0 为不限）</text>
+        <input class="input-field" type="digit" placeholder="0" value="{{editForm.max}}" bindinput="onEditInput" data-field="max" />
+      </view>
+      <button class="btn-primary" bindtap="submitEditActivity" loading="{{submittingEdit}}">✅ 保存修改</button>
+    </view>
+  </view>
+
+  <!-- 成员留言弹窗 -->
+  <view wx:if="{{showMessageDialog}}" class="dialog-mask" bindtap="closeMessageDialog">
+    <view class="dialog-box dialog-wide" catchtap>
+      <view class="dialog-header">
+        <text class="dialog-title">💬 {{messageTargetNickname || messageTargetUser}} 的留言板</text>
+        <text class="dialog-close" bindtap="closeMessageDialog">✕</text>
+      </view>
+
+      <view class="msg-list" wx:if="{{messages.length > 0}}">
+        <view wx:for="{{messages}}" wx:key="id" class="msg-item">
+          <view class="msg-header">
+            <text class="msg-author">{{item.nickname || item.user_id}}</text>
+            <text wx:if="{{item.user_id === currentUserId}}" class="msg-delete" data-id="{{item.id}}" bindtap="deleteMessage">删除</text>
+          </view>
+          <text class="msg-content">{{item.content}}</text>
+          <text class="msg-time">{{item.created_at}}</text>
+        </view>
+      </view>
+      <view wx:else class="msg-empty">
+        <text class="empty-text">暂无留言</text>
+      </view>
+
+      <view class="msg-input-row">
+        <input class="msg-input" placeholder="给 {{messageTargetUser}} 留言..." value="{{messageInput}}" bindinput="onMessageInput" />
+        <button class="btn-primary msg-send" size="mini" bindtap="submitMessage">发送</button>
+      </view>
+    </view>
+  </view>

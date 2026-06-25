@@ -1,0 +1,156 @@
+.page {
+  padding: 20px 0 100px;
+}
+
+/* 操作入口 */
+.action-row {
+  display: flex;
+  gap: 12px;
+  padding: 0 16px 16px;
+}
+
+.action-card {
+  flex: 1;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  border: 2px dashed var(--border);
+}
+
+.action-icon {
+  font-size: 28px;
+}
+
+.action-text {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* 团队卡片 */
+.team-card {
+  margin-bottom: 10px;
+}
+
+.tc-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tc-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+
+.tc-info {
+  flex: 1;
+}
+
+.tc-name {
+  font-size: 17px;
+  font-weight: 600;
+  display: block;
+}
+
+.tc-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tc-arrow {
+  font-size: 22px;
+  color: var(--text-muted);
+}
+
+.tc-bottom {
+  display: flex;
+  gap: 16px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.tc-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.tc-owner {
+  margin-left: auto;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 16px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  display: block;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.dialog-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.dialog-close {
+  font-size: 20px;
+  color: var(--text-muted);
+  padding: 4px 8px;
+}
+
+.dialog-box {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 20px;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.dialog-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 8vh;
+  z-index: 999;
+}
+
+.dialog-wide {
+  width: 94%;
+  max-width: 500px;
+}

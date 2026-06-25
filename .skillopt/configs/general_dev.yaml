@@ -1,0 +1,36 @@
+_base_: _base_.yaml
+
+model:
+  reasoning_effort: medium
+
+train:
+  train_size: 0
+  batch_size: 8
+  num_epochs: 3
+  accumulation: 1
+
+gradient:
+  minibatch_size: 4
+  merge_batch_size: 4
+
+optimizer:
+  learning_rate: 3
+  use_slow_update: true
+  use_meta_skill: true
+
+evaluation:
+  sel_env_num: 0
+  test_env_num: 0
+
+env:
+  name: searchqa
+  skill_init: "C:/Users/12225/AppData/Local/Programs/Python/Python312/Lib/site-packages/configs/initial_dev_skill.md"
+  split_mode: ratio
+  data_path: "C:/Users/12225/AppData/Local/Programs/Python/Python312/Lib/site-packages/configs/general_dev_data.json"
+  split_dir: ""
+  split_output_dir: ""
+  max_turns: 1
+  max_completion_tokens: 8192
+  workers: 4
+  limit: 0
+  out_root: "C:/Users/12225/skillopt_outputs/general_dev"

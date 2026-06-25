@@ -1,0 +1,54 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/teams/teams",
+    "pages/team_detail/team_detail",
+    "pages/activity_detail/activity_detail",
+    "pages/special_events/special_events",
+    "pages/special_event_detail/special_event_detail",
+    "pages/achievements/achievements",
+    "pages/notifications/notifications",
+    "pages/profile/profile"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#1a1a2e",
+    "navigationBarTitleText": "Tribo",
+    "navigationBarTextStyle": "white"
+  },
+  "tabBar": {
+    "color": "#8e8e93",
+    "selectedColor": "#6c63ff",
+    "backgroundColor": "#1a1a2e",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "iconPath": "images/tab_home.png",
+        "selectedIconPath": "images/tab_home_active.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/teams/teams",
+        "iconPath": "images/tab_teams.png",
+        "selectedIconPath": "images/tab_teams_active.png",
+        "text": "团队"
+      },
+      {
+        "pagePath": "pages/special_events/special_events",
+        "iconPath": "images/tab_habits.png",
+        "selectedIconPath": "images/tab_habits_active.png",
+        "text": "目标"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "iconPath": "images/tab_profile.png",
+        "selectedIconPath": "images/tab_profile_active.png",
+        "text": "我的"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

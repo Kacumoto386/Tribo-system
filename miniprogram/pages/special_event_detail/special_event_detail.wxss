@@ -1,0 +1,299 @@
+.page {
+  padding: 20px 0 100px;
+}
+
+/* 进度卡片 */
+.progress-card {
+  text-align: center;
+}
+
+.pc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.pc-type-tag {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.pc-title {
+  font-size: 20px;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.pc-ring-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.pc-ring {
+  position: relative;
+  width: 160px;
+  height: 160px;
+}
+
+.pc-canvas {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+}
+
+.pc-ring-center {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.pc-ring-pct {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--primary-light);
+}
+
+.pc-ring-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.pc-stats {
+  display: flex;
+  gap: 0;
+}
+
+.pc-stat {
+  flex: 1;
+  padding: 8px;
+  border-right: 1px solid var(--border);
+}
+
+.pc-stat:last-child {
+  border-right: none;
+}
+
+.pc-stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  display: block;
+  color: var(--primary-light);
+}
+
+.pc-stat-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  display: block;
+}
+
+/* 描述卡片 */
+.desc-card {
+  margin-bottom: 10px;
+}
+
+.desc-text {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* Tab */
+.tab-row {
+  display: flex;
+  gap: 0;
+  padding: 0 16px 12px;
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  font-size: 15px;
+  color: var(--text-secondary);
+  border-bottom: 2px solid transparent;
+}
+
+.tab-active {
+  color: var(--primary-light);
+  border-bottom-color: var(--primary);
+  font-weight: 600;
+}
+
+/* 打卡记录 */
+.log-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  padding: 12px 16px;
+}
+
+.lc-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lc-icon {
+  font-size: 20px;
+}
+
+.lc-value {
+  font-size: 14px;
+  font-weight: 600;
+  display: block;
+  color: var(--accent-green);
+}
+
+.lc-date {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: block;
+  margin-top: 2px;
+}
+
+.lc-note {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* 排行榜 */
+.ranking-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+  padding: 12px 16px;
+}
+
+.rk-rank {
+  font-size: 14px;
+  font-weight: 600;
+  width: 24px;
+  text-align: center;
+}
+
+.rk-top {
+  color: var(--primary-light);
+}
+
+.rk-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(108,99,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary-light);
+  flex-shrink: 0;
+}
+
+.rk-info {
+  flex: 1;
+}
+
+.rk-name {
+  font-size: 14px;
+  font-weight: 500;
+  display: block;
+}
+
+.rk-value {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: block;
+  margin-top: 2px;
+}
+
+.rk-badge {
+  font-size: 24px;
+}
+
+/* 弹窗 */
+.dialog-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.dialog-box {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 24px;
+  width: 85%;
+  max-width: 360px;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.dialog-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.dialog-close {
+  font-size: 20px;
+  color: var(--text-muted);
+  padding: 4px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  display: block;
+}
+
+.input-field {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: 15px;
+  color: var(--text-primary);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 16px;
+}
+
+.empty-text {
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+.empty-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 8px;
+  display: block;
+}

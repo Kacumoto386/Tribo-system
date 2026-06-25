@@ -1,0 +1,41 @@
+<!-- 成就殿堂页面 -->
+<view class="page">
+  <!-- 顶部统计 -->
+  <view class="card stats-card">
+    <view class="ach-stats">
+      <text class="ach-stat-value">{{earnedCount}}/{{totalCount}}</text>
+      <text class="ach-stat-label">已获得成就</text>
+    </view>
+    <view class="ach-progress-ring">
+      <view class="ring-bg"></view>
+      <view class="ring-fill" style="width:{{progressPercent}}%"></view>
+    </view>
+  </view>
+
+  <!-- 分类筛选 -->
+  <view class="filter-row">
+    <view wx:for="{{['全部','🏋️ 运动','🌱 习惯','🏆 挑战']}}" wx:key="index"
+          class="filter-tab {{catIndex === index ? 'filter-active' : ''}}"
+          data-index="{{index}}" bindtap="switchCat">
+      <text>{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 成就列表 -->
+  <view wx:for="{{filteredAchievements}}" wx:key="id" class="card ach-card {{item.earned ? '' : 'ach-locked'}}">
+    <view class="ach-icon-box {{item.earned ? 'ach-unlocked' : 'ach-locked-icon'}}">
+      <text class="ach-icon">{{item.earned ? item.icon : '🔒'}}</text>
+    </view>
+    <view class="ach-info">
+      <text class="ach-name">{{item.name}}</text>
+      <text class="ach-desc">{{item.description}}</text>
+    </view>
+    <view wx:if="{{!item.earned}}" class="tag tag-secondary">未获得</view>
+    <view wx:if="{{item.earned}}" class="tag tag-success">✅ 已获得</view>
+  </view>
+
+  <view wx:if="{{filteredAchievements.length === 0}}" class="empty-block">
+    <text class="empty-icon">🏅</text>
+    <text class="empty-title">暂无成就</text>
+  </view>
+</view>

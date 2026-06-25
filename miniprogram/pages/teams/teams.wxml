@@ -1,0 +1,75 @@
+<!-- 团队列表页面 -->
+<view class="page">
+  <!-- 创建/加入团队入口（仅活跃团队页显示） -->
+  <view wx:if="{{!archived}}" class="action-row">
+    <view class="action-card" bindtap="showCreateDialog">
+      <text class="action-icon">✚</text>
+      <text class="action-text">创建团队</text>
+    </view>
+    <view class="action-card" bindtap="showJoinDialog">
+      <text class="action-icon">🔗</text>
+      <text class="action-text">加入团队</text>
+    </view>
+  </view>
+
+  <!-- 团队列表 -->
+  <view class="section-header">
+    <text class="section-title">{{archived ? '📂 已撤回的团队' : '👥 我的团队'}}</text>
+  </view>
+
+  <view wx:for="{{teams}}" wx:key="id" class="card team-card fade-in" data-id="{{item.id}}" bindtap="goTeamDetail">
+    <view class="tc-top">
+      <view class="tc-avatar">{{item.initial}}</view>
+      <view class="tc-info">
+        <text class="tc-name">{{item.name}}</text>
+        <text class="tc-desc">{{item.description || '暂无简介'}}</text>
+      </view>
+      <text class="tc-arrow">›</text>
+    </view>
+    <view class="tc-bottom">
+      <text class="tc-meta">👤 {{item.member_count || 1}} 人</text>
+      <text class="tc-meta" wx:if="{{!archived}}">🔑 {{item.invite_code}} <text data-code="{{item.invite_code}}" bindtap="copyInviteCode" style="color:var(--primary-light)">📋复制</text></text>
+      <text class="tc-meta tc-owner">{{item.owner_id === currentUserId ? '🔴 群主' : ''}}</text>
+    </view>
+  </view>
+
+  <view wx:if="{{teams.length === 0}}" class="empty-block">
+    <text class="empty-icon">{{archived ? '📂' : '👥'}}</text>
+    <text class="empty-title">{{archived ? '暂无已撤回的团队' : '还没有加入团队'}}</text>
+    <text class="empty-desc">{{archived ? '撤回的团队会出现在这里' : '创建或加入一个团队，和伙伴们一起活动吧！'}}</text>
+  </view>
+
+  <!-- 加入团队弹窗（放在前边，显示优先级更高） -->
+  <view wx:if="{{showJoin}}" class="dialog-mask" bindtap="closeJoin">
+    <view class="dialog-box dialog-wide" catchtap>
+      <view class="dialog-header">
+        <text class="dialog-title">🔗 加入团队</text>
+        <text class="dialog-close" bindtap="closeJoin">✕</text>
+      </view>
+      <view class="form-group">
+        <text class="form-label">邀请码 *</text>
+        <input class="input-field" placeholder="输入团队邀请码" value="{{joinCode}}" bindinput="onJoinInput" />
+      </view>
+      <button class="btn-primary" bindtap="submitJoin" loading="{{submittingJoin}}">✅ 加入团队</button>
+    </view>
+  </view>
+
+  <!-- 创建团队弹窗 -->
+  <view wx:if="{{showCreate}}" class="dialog-mask" bindtap="closeCreate">
+    <view class="dialog-box dialog-wide" catchtap>
+      <view class="dialog-header">
+        <text class="dialog-title">✚ 创建团队</text>
+        <text class="dialog-close" bindtap="closeCreate">✕</text>
+      </view>
+      <view class="form-group">
+        <text class="form-label">团队名称 *</text>
+        <input class="input-field" placeholder="输入团队名称" value="{{createForm.name}}" bindinput="onCreateInput" data-field="name" />
+      </view>
+      <view class="form-group">
+        <text class="form-label">团队简介</text>
+        <input class="input-field" placeholder="可选简介" value="{{createForm.description}}" bindinput="onCreateInput" data-field="description" />
+      </view>
+      <button class="btn-primary" bindtap="submitCreate" loading="{{submittingCreate}}">✅ 创建团队</button>
+    </view>
+  </view>
+</view>

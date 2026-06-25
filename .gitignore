@@ -1,0 +1,23 @@
+# Environment
+.env
+.skillopt/.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# SkillOpt outputs
+skillopt_outputs/
+.skillopt/outputs/
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

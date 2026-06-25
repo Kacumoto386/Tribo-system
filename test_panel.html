@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tribo 测试面板</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #0f0f23;
+  color: #e0e0f0;
+  font-family: -apple-system, sans-serif;
+  padding: 20px;
+}
+h1 {
+  font-size: 28px;
+  margin-bottom: 4px;
+  background: linear-gradient(135deg, #6c63ff, #ff6b9d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+h2 { font-size: 16px; color: #8888aa; margin-bottom: 24px; }
+.section { margin-bottom: 24px; }
+.section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #6c63ff;
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #2a2a4a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+}
+.card {
+  background: #1a1a2e;
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid #2a2a4a;
+}
+.card:hover {
+  border-color: #6c63ff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(108,99,255,0.15);
+}
+.card-icon { font-size: 24px; }
+.card-title { font-size: 15px; font-weight: 600; margin-top: 8px; display: block; }
+.card-desc { font-size: 12px; color: #6c6c80; margin-top: 4px; display: block; }
+.card-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  margin-top: 8px;
+}
+.tag-get { background: rgba(46,204,113,0.15); color: #2ecc71; }
+.tag-post { background: rgba(52,152,219,0.15); color: #3498db; }
+.tag-put { background: rgba(243,156,18,0.15); color: #f39c12; }
+.tag-delete { background: rgba(231,76,60,0.15); color: #e74c3c; }
+
+#result {
+  background: #1a1a2e;
+  border: 1px solid #2a2a4a;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 24px;
+  max-height: 600px;
+  overflow: auto;
+  white-space: pre-wrap;
+  font-family: 'Monaco', 'Menlo', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.btn-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-primary { background: #6c63ff; color: white; }
+.btn-primary:hover { background: #5a52e0; }
+.btn-secondary { background: #2a2a4a; color: #a0a0b8; border: 1px solid #3a3a5a; }
+.btn-secondary:hover { background: #3a3a5a; color: white; }
+
+.loading::after {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid #6c63ff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<h1>🧀 Tribo · 测试面板</h1>
+<h2>后端 http://127.0.0.1:8011</h2>
+
+<div class="section">
+  <div class="section-title">🏋️ 健身运动</div>
+  <div class="grid">
+    <div class="card" onclick="testApi('GET','/api/workouts/stats')">
+      <div class="card-icon">📊</div>
+      <span class="card-title">运动统计</span>
+      <span class="card-desc">总天数/时长/卡路里/连续</span>
+      <span class="card-tag tag-get">GET</span>
+    </div>
+    <div class="card" onclick="testApi('GET','/api/workouts')">
+      <div class="card-icon">📋</div>
+      <span class="card-title">运动记录列表</span>
+      <span class="card-desc">所有运动记录</span>
+      <span class="card-tag tag-get">GET</span>
+    </div>
+    <div class="card" onclick="testApi('GET','/api/workouts/calendar?year=2026&month=5')">
+      <div class="card-icon">📅</div>
+      <span class="card-title">日历视图</span>
+      <span class="card-desc">2026年5月每日汇总</span>
+      <span class="card-tag tag-get">GET</span>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">🏅 成就 & 统计</div>
+  <div class="grid">
+    <div class="card" onclick="testApi('GET','/api/stats/achievements')">
+      <div class="card-icon">🏅</div>
+      <span class="card-title">成就列表</span>
+      <span class="card-desc">13个预设成就 + 获得状态</span>
+      <span class="card-tag tag-get">GET</span>
+    </div>
+    <div class="card" onclick="testApi('GET','/api/stats/overview')">
+      <div class="card-icon">📈</div>
+      <span class="card-title">综合统计</span>
+      <span class="card-desc">总览/连续/完成的任务</span>
+      <span class="card-tag tag-get">GET</span>
+    </div>
+    <div class="card" onclick="testApi('GET','/api/stats/weekly?weeks=4')">
+      <div class="card-icon">📊</div>
+      <span class="card-title">周趋势</span>
+      <span class="card-desc">近4周运动时长趋势</span>
+      <span class="card-tag tag-get">GET</span>
+    </div>
+    <div class="card" onclick="testApi('GET','/api/stats/monthly?months=6')">
+      <div class="card-icon">📉</div>
+      <span class="card-title">月趋势</span>
+      <span class="card-desc">近6个月度统计</span>
+      <span class="card-tag tag-get">GET</span>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">✅ 任务 & 习惯</div>
+  <div class="grid">
+    <div class="card" onclick="testApi('GET','/api/tasks')">
+      <div class="card-icon">📋</div>
+      <span class="card-title">任务列表</span>
+      <span class="card-desc">所有任务</span>
+      <span class="card-tag tag-get">GET</span>
+    </div>
+    <div class="card" onclick="testApi('GET','/api/habits')">
+      <div class="card-icon">🌱</div>
+      <span class="card-title">习惯列表</span>
+      <span class="card-desc">所有习惯</span>
+      <span class="card-tag tag-get">GET</span>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">👥 团队</div>
+  <div class="grid">
+    <div class="card" onclick="testApi('GET','/api/teams')">
+      <div class="card-icon">👥</div>
+      <span class="card-title">我的团队</span>
+      <span class="card-desc">团队列表</span>
+      <span class="card-tag tag-get">GET</span>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">🏃 专项挑战</div>
+  <div class="grid">
+    <div class="card" onclick="testApi('GET','/api/events')">
+      <div class="card-icon">🏃</div>
+      <span class="card-title">挑战列表</span>
+      <span class="card-desc">所有专项挑战</span>
+      <span class="card-tag tag-get">GET</span>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">⚡ 快捷操作</div>
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="testApi('POST','/api/workouts', {sport_type:'running',duration:30,calories:200,intensity:2})">➕ 添加运动记录</button>
+    <button class="btn btn-primary" onclick="testApi('POST','/api/tasks', {title:'测试任务 '+new Date().getHours()+':'+new Date().getMinutes(),priority:3})">➕ 添加任务</button>
+    <button class="btn btn-primary" onclick="testApi('POST','/api/habits', {name:'测试习惯 '+new Date().getHours()+':'+new Date().getMinutes(),frequency_type:0,target_count:1})">➕ 添加习惯</button>
+    <button class="btn btn-secondary" onclick="testApi('GET','/api/stats/export/workouts')">📤 导出 CSV</button>
+  </div>
+</div>
+
+<div class="section-title">📝 返回结果</div>
+<pre id="result">点击上面的卡片查看 API 返回数据</pre>
+
+<script>
+const BASE = 'http://127.0.0.1:8011'
+
+async function testApi(method, path, body) {
+  const el = document.getElementById('result')
+  el.textContent = '请求中...'
+  el.className = 'loading'
+  
+  try {
+    const opts = {
+      method,
+      headers: {}
+    }
+    
+    if (body) {
+      opts.headers['Content-Type'] = 'application/json'
+      opts.body = JSON.stringify(body)
+    }
+    
+    // 添加 X-User-ID header
+    opts.headers['X-User-ID'] = 'dev_user_001'
+    
+    const res = await fetch(BASE + path, opts)
+    const contentType = res.headers.get('content-type') || ''
+    
+    let data
+    if (contentType.includes('text/csv')) {
+      data = await res.text()
+      // 显示 CSV
+      el.textContent = `[${method}] ${path}\n\n状态: ${res.status} ${res.statusText}\n类型: text/csv\n\n${data.slice(0, 2000)}`
+      return
+    } else {
+      data = await res.text()
+    }
+    
+    try {
+      const json = JSON.parse(data)
+      el.textContent = `[${method}] ${path}\n\n状态: ${res.status} ${res.statusText}\n\n${JSON.stringify(json, null, 2)}`
+    } catch(e) {
+      el.textContent = `[${method}] ${path}\n\n状态: ${res.status} ${res.statusText}\n\n${data}`
+    }
+    
+  } catch(err) {
+    el.textContent = `❌ 请求失败: ${err.message}\n\n确保后端已启动: cd backend && uvicorn app.main:app --port 8011`
+  }
+  el.className = ''
+}
+</script>
+</body>
+</html>
